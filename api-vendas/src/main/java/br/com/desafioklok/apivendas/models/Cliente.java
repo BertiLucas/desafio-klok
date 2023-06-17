@@ -16,12 +16,20 @@ import java.io.Serializable;
 @Entity
 public class Cliente implements Serializable {
 
+    // Identificador único do cliente gerado automaticamente pelo banco de dados
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nome do cliente
     private String nome;
+
+    // CPF do cliente
     private String cpf;
+
+    // E-mail do cliente
     private String email;
+
+    // Endereço do cliente
     private String endereco;
 }

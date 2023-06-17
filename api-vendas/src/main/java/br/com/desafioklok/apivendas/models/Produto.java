@@ -16,11 +16,17 @@ import java.io.Serializable;
 @Entity
 public class Produto implements Serializable {
 
+    // Identificador único do produto gerado automaticamente pelo banco de dados
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nome do produto
     private String nome;
+
+    // Descrição do produto
     private String descricao;
+
+    // Preço do produto
     private double preco;
 }
