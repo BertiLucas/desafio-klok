@@ -1,0 +1,30 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-api-vendas
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=api-vendas
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-vendas
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/api-vendas
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+
+volumes:
+  postgres-data:
