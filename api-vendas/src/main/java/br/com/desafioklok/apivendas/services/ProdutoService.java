@@ -41,4 +41,12 @@ public class ProdutoService {
         }
         repository.deleteById(id);
     }
+
+    public Produto update(Produto produto) {
+        if (!repository.existsById(produto.getId())) {
+            throw new IllegalArgumentException("O produto com o ID fornecido não existe.");
+        }
+        return repository.save(produto);
+    }
+
 }

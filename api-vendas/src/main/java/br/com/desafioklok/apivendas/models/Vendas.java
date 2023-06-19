@@ -31,6 +31,10 @@ public class Vendas implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "produto_id" ))
     private List<Produto> produtos;
 
+    @ManyToOne
+    @JoinColumn(name= "cobranca_id")
+    private Cobranca cobranca;
+
     // Valor total da venda
     private double valor;
 }

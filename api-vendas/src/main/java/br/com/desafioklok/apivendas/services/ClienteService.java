@@ -45,4 +45,11 @@ public class ClienteService {
         repository.deleteById(id);
     }
 
+    public Cliente update(Cliente cliente) {
+        if (cliente.getId() == null || !repository.existsById(cliente.getId())) {
+            throw new IllegalArgumentException("O cliente com o ID fornecido não existe.");
+        }
+        return repository.save(cliente);
+    }
+
 }

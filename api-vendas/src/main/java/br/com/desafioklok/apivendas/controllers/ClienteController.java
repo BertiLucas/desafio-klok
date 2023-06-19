@@ -44,4 +44,16 @@ public class ClienteController {
         clienteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
+        cliente.setId(id);
+        try {
+            Cliente updatedCliente = clienteService.update(cliente);
+            return new ResponseEntity<>(updatedCliente, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

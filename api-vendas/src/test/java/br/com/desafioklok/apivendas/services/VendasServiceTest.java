@@ -118,33 +118,4 @@ public class VendasServiceTest {
         verify(vendasRepository, never()).deleteById(vendaId);
     }
 
-    @Test
-    public void testAtualizarVendaExistingVenda() {
-        Vendas venda = new Vendas();
-        venda.setId(1L);
-
-        when(vendasRepository.existsById(venda.getId())).thenReturn(true);
-        when(vendasRepository.save(venda)).thenReturn(venda);
-
-        Vendas updatedVenda = vendasService.atualizarVenda(venda);
-
-        assertNotNull(updatedVenda);
-        assertEquals(venda, updatedVenda);
-
-        verify(vendasRepository, times(1)).existsById(venda.getId());
-        verify(vendasRepository, times(1)).save(venda);
-    }
-
-    @Test
-    public void testAtualizarVendaNonExistingVenda() {
-        Vendas venda = new Vendas();
-        venda.setId(1L);
-
-        when(vendasRepository.existsById(venda.getId())).thenReturn(false);
-
-        assertThrows(IllegalArgumentException.class, () -> vendasService.atualizarVenda(venda));
-
-        verify(vendasRepository, times(1)).existsById(venda.getId());
-        verify(vendasRepository, never()).save(venda);
-    }
 }

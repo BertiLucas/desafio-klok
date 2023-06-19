@@ -18,13 +18,13 @@ public class VendasController {
     @Autowired
     private VendasService vendasService;
 
-    @PostMapping("/all")
+    @PostMapping
     public ResponseEntity<Vendas> createVenda(@RequestBody VendasDTO vendasDTO) {
         Vendas createdVenda = vendasService.create(vendasDTO);
         return new ResponseEntity<>(createdVenda, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<Vendas>> getAllVendas() {
         List<Vendas> vendas = vendasService.findAll();
         return new ResponseEntity<>(vendas, HttpStatus.OK);
@@ -40,10 +40,34 @@ public class VendasController {
         }
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVenda(@PathVariable Long id) {
         vendasService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Vendas> updateVendas(@PathVariable Long id, @RequestBody Vendas vendas) {
+        Optional<Vendas> optionalVenda = vendasService.findById(id);
+        if (optionalVenda.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Vendas venda = optionalVenda.get();
+
+        if (vendas.getCliente() != null) {
+            venda.setCliente(vendas.getCliente());
+        }
+        if (vendas.getProdutos() != null) {
+            venda.setProdutos(vendas.getProdutos());
+        }
+        if (vendas.getCobranca() != null) {
+            venda.setCobranca(vendas.getCobranca());
+        }
+
+        Vendas vendaAtualizada = vendasService.updateVendas(venda);
+        return ResponseEntity.ok(vendaAtualizada);
+    }
+
+
 }

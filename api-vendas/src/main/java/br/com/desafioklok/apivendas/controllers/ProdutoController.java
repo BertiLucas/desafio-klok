@@ -44,4 +44,16 @@ public class ProdutoController {
         produtoService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Produto> updateProduto(@PathVariable Long id, @RequestBody Produto produto) {
+        produto.setId(id);
+        try {
+            Produto updatedProduto = produtoService.update(produto);
+            return new ResponseEntity<>(updatedProduto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
