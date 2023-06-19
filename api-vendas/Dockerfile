@@ -8,4 +8,4 @@ RUN mvn clean install -DskipTests
 
 EXPOSE 8080
 
-CMD ["java", "-jar", ""]
+CMD ["java", "-jar", "target/api-vendas-0.0.1-SNAPSHOT.jar"]
