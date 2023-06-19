@@ -1,7 +1,6 @@
 package br.com.desafioklok.apivendas.dtos;
 
 import br.com.desafioklok.apivendas.models.Cliente;
-import br.com.desafioklok.apivendas.models.Cobranca;
 import br.com.desafioklok.apivendas.models.Produto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,5 @@ public class VendasDTO {
     private Long id;
     private Cliente cliente;
     private List<Produto> produtos;
-    private Cobranca cobranca;
-
 }
 

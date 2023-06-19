@@ -110,5 +110,49 @@ public class ProdutoServiceTest {
         verify(produtoRepository, times(1)).existsById(produtoId);
         verify(produtoRepository, never()).deleteById(produtoId);
     }
+    @Test
+    public void testUpdateProduto() {
+        // Dados de entrada
+        Long id = 1L;
+        Produto produto = new Produto();
+        produto.setId(id);
+        produto.setNome("Novo Nome");
+        produto.setDescricao("Nova Descrição");
+        produto.setPreco(10.0);
+
+        // Mock do repositório
+        when(produtoRepository.existsById(id)).thenReturn(true);
+        when(produtoRepository.save(produto)).thenReturn(produto);
+
+        // Chamada do método no serviço
+        Produto resultado = produtoService.update(produto);
+
+        // Verificações
+        assertEquals(produto, resultado);
+        verify(produtoRepository, times(1)).existsById(id);
+        verify(produtoRepository, times(1)).save(produto);
+    }
+
+    @Test
+    public void testUpdateProdutoIdInvalido() {
+        // Dados de entrada
+        Long id = 1L;
+        Produto produto = new Produto();
+        produto.setId(id);
+        produto.setNome("Novo Nome");
+        produto.setDescricao("Nova Descrição");
+        produto.setPreco(10.0);
+
+        // Mock do repositório
+        when(produtoRepository.existsById(id)).thenReturn(false);
+
+        // Chamada do método no serviço e verificação de exceção
+        assertThrows(IllegalArgumentException.class, () -> produtoService.update(produto));
+
+        // Verificações
+        verify(produtoRepository, times(1)).existsById(id);
+        verify(produtoRepository, never()).save(produto);
+    }
+
 }
 

@@ -47,27 +47,5 @@ public class VendasController {
     }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Vendas> updateVendas(@PathVariable Long id, @RequestBody Vendas vendas) {
-        Optional<Vendas> optionalVenda = vendasService.findById(id);
-        if (optionalVenda.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Vendas venda = optionalVenda.get();
-
-        if (vendas.getCliente() != null) {
-            venda.setCliente(vendas.getCliente());
-        }
-        if (vendas.getProdutos() != null) {
-            venda.setProdutos(vendas.getProdutos());
-        }
-        if (vendas.getCobranca() != null) {
-            venda.setCobranca(vendas.getCobranca());
-        }
-
-        Vendas vendaAtualizada = vendasService.updateVendas(venda);
-        return ResponseEntity.ok(vendaAtualizada);
-    }
-
 
 }

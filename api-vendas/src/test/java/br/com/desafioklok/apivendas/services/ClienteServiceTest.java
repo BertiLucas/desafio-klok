@@ -110,4 +110,49 @@ public class ClienteServiceTest {
         verify(clienteRepository, times(1)).existsById(clienteId);
         verify(clienteRepository, never()).deleteById(clienteId);
     }
+
+    @Test
+    public void testUpdateCliente() {
+        // Dados de entrada
+        Long id = 1L;
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+        cliente.setNome("Novo Nome");
+        cliente.setCpf("123456789");
+
+        // Mock do repositório
+        when(clienteRepository.existsById(id)).thenReturn(true);
+        when(clienteRepository.save(cliente)).thenReturn(cliente);
+
+        // Chamada do método no serviço
+        Cliente resultado = clienteService.update(cliente);
+
+        // Verificações
+        assertEquals(cliente, resultado);
+        verify(clienteRepository, times(1)).existsById(id);
+        verify(clienteRepository, times(1)).save(cliente);
+    }
+
+    @Test
+    public void testUpdateClienteIdInvalido() {
+        // Dados de entrada
+        Long id = 1L;
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+        cliente.setNome("Novo Nome");
+        cliente.setCpf("123456789");
+
+        // Mock do repositório
+        when(clienteRepository.existsById(id)).thenReturn(false);
+
+        // Chamada do método no serviço e verificação de exceção
+        assertThrows(IllegalArgumentException.class, () -> clienteService.update(cliente));
+
+        // Verificações
+        verify(clienteRepository, times(1)).existsById(id);
+        verify(clienteRepository, never()).save(cliente);
+    }
+
+
+
 }

@@ -5,25 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Cobranca implements Serializable {
+public class Cobranca {
 
-    // Identificador único da cobrança gerado automaticamente pelo banco de dados
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Venda associada à cobrança
-    @OneToOne
-    @JoinColumn(name = "venda_id")
+
+    @OneToOne(mappedBy = "cobranca")
     private Vendas venda;
 
-    // Valor da cobrança
     private double valor;
+
 }
+
 

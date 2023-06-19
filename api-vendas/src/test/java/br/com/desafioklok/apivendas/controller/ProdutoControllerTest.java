@@ -95,4 +95,49 @@ public class ProdutoControllerTest {
 
         verify(produtoService, times(1)).delete(produtoId);
     }
+
+    @Test
+    public void testUpdateProduto() {
+        // Dados de entrada
+        Long id = 1L;
+        Produto produto = new Produto();
+        produto.setId(id);
+
+        // Produto atualizado
+        Produto produtoAtualizado = new Produto();
+        produtoAtualizado.setId(id);
+        produtoAtualizado.setNome("Novo Nome");
+        produtoAtualizado.setDescricao("Nova Descrição");
+        produtoAtualizado.setPreco(10.0);
+
+        // Mock do serviço
+        when(produtoService.update(produto)).thenReturn(produtoAtualizado);
+
+        // Chamada do método no controller
+        ResponseEntity<Produto> response = produtoController.updateProduto(id, produto);
+
+        // Verificações
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(produtoAtualizado, response.getBody());
+        verify(produtoService, times(1)).update(produto);
+    }
+
+    @Test
+    public void testUpdateProdutoNotFound() {
+        // Dados de entrada
+        Long id = 1L;
+        Produto produto = new Produto();
+        produto.setId(id);
+
+        // Mock do serviço lançando exceção
+        when(produtoService.update(produto)).thenThrow(new IllegalArgumentException());
+
+        // Chamada do método no controller
+        ResponseEntity<Produto> response = produtoController.updateProduto(id, produto);
+
+        // Verificações
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(produtoService, times(1)).update(produto);
+    }
 }
+

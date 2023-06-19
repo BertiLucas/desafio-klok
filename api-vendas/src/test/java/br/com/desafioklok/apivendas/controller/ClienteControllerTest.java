@@ -95,4 +95,47 @@ public class ClienteControllerTest {
 
         verify(clienteService, times(1)).delete(clienteId);
     }
+    @Test
+    public void testUpdateCliente() {
+        // Dados de entrada
+        Long id = 1L;
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+
+        // Cliente atualizado
+        Cliente clienteAtualizado = new Cliente();
+        clienteAtualizado.setId(id);
+        clienteAtualizado.setNome("Novo Nome");
+        clienteAtualizado.setEmail("novoemail@example.com");
+
+        // Mock do serviço
+        when(clienteService.update(cliente)).thenReturn(clienteAtualizado);
+
+        // Chamada do método no controller
+        ResponseEntity<Cliente> response = clienteController.updateCliente(id, cliente);
+
+        // Verificações
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clienteAtualizado, response.getBody());
+        verify(clienteService, times(1)).update(cliente);
+    }
+
+    @Test
+    public void testUpdateClienteNotFound() {
+        // Dados de entrada
+        Long id = 1L;
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+
+        // Mock do serviço lançando exceção
+        when(clienteService.update(cliente)).thenThrow(new IllegalArgumentException());
+
+        // Chamada do método no controller
+        ResponseEntity<Cliente> response = clienteController.updateCliente(id, cliente);
+
+        // Verificações
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(clienteService, times(1)).update(cliente);
+    }
 }
+

@@ -1,7 +1,6 @@
 package br.com.desafioklok.apivendas.services;
 
 import br.com.desafioklok.apivendas.dtos.VendasDTO;
-import br.com.desafioklok.apivendas.models.Cliente;
 import br.com.desafioklok.apivendas.models.Cobranca;
 import br.com.desafioklok.apivendas.models.Produto;
 import br.com.desafioklok.apivendas.models.Vendas;
@@ -55,44 +54,5 @@ public class VendasService {
         repository.deleteById(id);
     }
 
-    public Vendas update(Vendas vendas) {
-        if (!repository.existsById(vendas.getId())) {
-            throw new IllegalArgumentException("A venda com o ID fornecido não existe.");
-        }
-        return repository.save(vendas);
-    }
-
-    public Vendas updateVendas(Vendas vendas) {
-        Long vendaId = vendas.getId();
-        Optional<Vendas> vendaOptional = repository.findById(vendaId);
-
-        if (!vendaOptional.isPresent()) {
-            throw new IllegalArgumentException("A venda com o ID fornecido não existe.");
-        }
-
-        Vendas venda = vendaOptional.get();
-
-        Cliente novoCliente = vendas.getCliente();
-        List<Produto> novosProdutos = vendas.getProdutos();
-        Cobranca novaCobranca = vendas.getCobranca();
-
-        if (novoCliente != null) {
-            venda.setCliente(novoCliente);
-        }
-
-        if (novosProdutos != null) {
-            venda.setProdutos(novosProdutos);
-            double novoValorTotal = novosProdutos.stream()
-                    .mapToDouble(Produto::getPreco)
-                    .sum();
-            venda.setValor(novoValorTotal);
-        }
-
-        if (novaCobranca != null) {
-            venda.setCobranca(novaCobranca);
-        }
-
-        return repository.save(venda);
-    }
 
 }
