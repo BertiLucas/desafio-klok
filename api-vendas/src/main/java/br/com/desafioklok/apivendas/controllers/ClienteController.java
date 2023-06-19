@@ -11,46 +11,37 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class ClienteController {
 
     @Autowired
-    ClienteService service;
+    private ClienteService clienteService;
 
-    // Endpoint para criar um novo cliente
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Cliente> create(@RequestBody Cliente cliente){
-        // Chama o método "create" do serviço para criar o cliente
-        Cliente clienteCreated = service.create(cliente);
-        // Retorna uma resposta com o cliente criado e o status HTTP 201 (Created)
-        return ResponseEntity.status(201).body(clienteCreated);
+    public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
+        Cliente createdCliente = clienteService.create(cliente);
+        return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
     }
 
-    // Endpoint para obter todos os clientes
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Cliente> findAll(){
-        // Chama o método "findAll" do serviço para obter todos os clientes
-        return service.findAll();
+    public ResponseEntity<List<Cliente>> getAllClientes() {
+        List<Cliente> clientes = clienteService.findAll();
+        return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
-    // Endpoint para obter um cliente pelo ID
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Optional<Cliente> findById(@PathVariable Long id){
-        // Chama o método "findById" do serviço para obter um cliente pelo ID
-        return service.findById(id);
+    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
+        Optional<Cliente> cliente = clienteService.findById(id);
+        if (cliente.isPresent()) {
+            return new ResponseEntity<>(cliente.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Endpoint para excluir um cliente pelo ID
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        // Chama o método "delete" do serviço para excluir um cliente pelo ID
-        service.delete(id);
-        // Retorna uma resposta vazia com o status HTTP 204 (No Content)
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+        clienteService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

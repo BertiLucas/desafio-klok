@@ -11,45 +11,37 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/produto")
+@RequestMapping("/produtos")
 public class ProdutoController {
 
     @Autowired
-    ProdutoService service;
+    private ProdutoService produtoService;
 
-    // Endpoint para criar um novo produto
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Produto> create(@RequestBody Produto produto){
-        // Chama o método "create" do serviço para criar o produto
-        Produto produtoCreated = service.create(produto);
-        // Retorna uma resposta com o produto criado e o status HTTP 201 (Created)
-        return ResponseEntity.status(201).body(produtoCreated);
+    public ResponseEntity<Produto> createProduto(@RequestBody Produto produto) {
+        Produto createdProduto = produtoService.create(produto);
+        return new ResponseEntity<>(createdProduto, HttpStatus.CREATED);
     }
 
-    // Endpoint para obter todos os produtos
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Produto> findAll(){
-        // Chama o método "findAll" do serviço para obter todos os produtos
-        return service.findAll();
+    public ResponseEntity<List<Produto>> getAllProdutos() {
+        List<Produto> produtos = produtoService.findAll();
+        return new ResponseEntity<>(produtos, HttpStatus.OK);
     }
 
-    // Endpoint para obter um produto pelo ID
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Optional<Produto> findById(@PathVariable Long id){
-        // Chama o método "findById" do serviço para obter um produto pelo ID
-        return service.findById(id);
+    public ResponseEntity<Produto> getProdutoById(@PathVariable Long id) {
+        Optional<Produto> produto = produtoService.findById(id);
+        if (produto.isPresent()) {
+            return new ResponseEntity<>(produto.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Endpoint para excluir um produto pelo ID
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        // Chama o método "delete" do serviço para excluir um produto pelo ID
-        service.delete(id);
-        // Retorna uma resposta vazia com o status HTTP 204 (No Content)
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteProduto(@PathVariable Long id) {
+        produtoService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

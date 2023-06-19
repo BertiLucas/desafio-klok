@@ -1,14 +1,11 @@
-# Define a imagem base do contêiner
-FROM openjdk:17
+FROM maven:3.8.3-openjdk-17
 
-# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Copia o arquivo JAR da sua aplicação para o diretório de trabalho
-COPY /target/api-vendas.jar api-vendas.jar
+COPY . .
 
-# Expõe a porta em que sua aplicação está executando
+RUN mvn clean install -DskipTests
+
 EXPOSE 8080
 
-# Comando para executar sua aplicação quando o contêiner for iniciado
-CMD ["java", "-jar", "api-vendas.jar"]
+CMD ["java", "-jar", ""]

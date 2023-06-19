@@ -2,22 +2,19 @@ package br.com.desafioklok.apivendas.services;
 
 import br.com.desafioklok.apivendas.models.Cliente;
 import br.com.desafioklok.apivendas.repositories.ClienteRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ClienteServiceTest {
 
     @Mock
@@ -26,108 +23,91 @@ public class ClienteServiceTest {
     @InjectMocks
     private ClienteService clienteService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCreateCliente() {
-        // Criação do objeto Cliente de teste
-        Cliente cliente = new Cliente();
-        cliente.setNome("João");
-        cliente.setCpf("123456789");
-        cliente.setEmail("joao@example.com");
-        cliente.setEndereco("Rua A");
-
-        // Configuração do comportamento do repositório mockado
+    public void testCreateValidCliente() {
+        Cliente cliente = new Cliente(1L, "João", "123456789", "joao@example.com", "Rua A");
         when(clienteRepository.save(cliente)).thenReturn(cliente);
 
-        // Chamada do método do serviço a ser testado
-        Cliente resultado = clienteService.create(cliente);
+        Cliente result = clienteService.create(cliente);
 
-        // Verificação dos resultados
-        assertEquals(cliente, resultado);
-        verify(clienteRepository, times(1)).save(cliente); // Verifica se o método "save" do repositório foi chamado uma vez com o cliente de teste
+        assertEquals(cliente, result);
+
+        verify(clienteRepository, times(1)).save(cliente);
     }
 
     @Test
-    public void testCreateClienteWithMissingInformation() {
-        // Criação do objeto Cliente de teste com dados incompletos
-        Cliente cliente = new Cliente();
+    public void testCreateInvalidCliente() {
+        Cliente cliente = new Cliente(1L, "", "123456789", "joao@example.com", "Rua A");
 
-        // Verificação se o serviço lança uma exceção ao criar um cliente com informações ausentes
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente));
-        verify(clienteRepository, never()).save(cliente); // Verifica se o método "save" do repositório nunca foi chamado com o cliente de teste incompleto
+
+        verify(clienteRepository, never()).save(cliente);
     }
 
     @Test
     public void testFindAllClientes() {
-        // Criação de dois objetos Cliente de teste
-        Cliente cliente1 = new Cliente();
-        Cliente cliente2 = new Cliente();
+        List<Cliente> clientes = new ArrayList<>();
+        clientes.add(new Cliente(1L, "João", "123456789", "joao@example.com", "Rua A"));
+        clientes.add(new Cliente(2L, "Maria", "987654321", "maria@example.com", "Rua B"));
+        when(clienteRepository.findAll()).thenReturn(clientes);
 
-        // Criação da lista de clientes esperada
-        List<Cliente> expectedClientes = Arrays.asList(cliente1, cliente2);
+        List<Cliente> result = clienteService.findAll();
 
-        // Configuração do comportamento do repositório mockado
-        when(clienteRepository.findAll()).thenReturn(expectedClientes);
+        assertEquals(clientes, result);
 
-        // Chamada do método do serviço a ser testado
-        List<Cliente> resultado = clienteService.findAll();
-
-        // Verificação dos resultados
-        assertEquals(expectedClientes, resultado);
-        verify(clienteRepository, times(1)).findAll(); // Verifica se o método "findAll" do repositório foi chamado uma vez
+        verify(clienteRepository, times(1)).findAll();
     }
 
     @Test
-    public void testFindClienteById() {
-        // ID do cliente de teste
+    public void testFindClienteByIdExistingCliente() {
         Long clienteId = 1L;
-
-        // Criação do objeto Cliente de teste
-        Cliente cliente = new Cliente();
-        cliente.setId(clienteId);
-
-        // Configuração do comportamento do repositório mockado
+        Cliente cliente = new Cliente(clienteId, "João", "123456789", "joao@example.com", "Rua A");
         when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
 
-        // Chamada do método do serviço a ser testado
-        Optional<Cliente> resultado = clienteService.findById(clienteId);
+        Optional<Cliente> result = clienteService.findById(clienteId);
 
-        // Verificação dos resultados
-        assertEquals(cliente, resultado.orElse(null));
-        verify(clienteRepository, times(1)).findById(clienteId); // Verifica se o método "findById" do repositório foi chamado uma vez com o ID de teste
+        assertTrue(result.isPresent());
+        assertEquals(cliente, result.get());
+
+        verify(clienteRepository, times(1)).findById(clienteId);
+    }
+
+    @Test
+    public void testFindClienteByIdNonExistingCliente() {
+        Long clienteId = 1L;
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.empty());
+
+        Optional<Cliente> result = clienteService.findById(clienteId);
+
+        assertFalse(result.isPresent());
+
+        verify(clienteRepository, times(1)).findById(clienteId);
     }
 
     @Test
     public void testDeleteExistingCliente() {
-        // ID do cliente de teste
         Long clienteId = 1L;
-
-        // Configuração do comportamento do repositório mockado
         when(clienteRepository.existsById(clienteId)).thenReturn(true);
 
-        // Chamada do método do serviço a ser testado
         clienteService.delete(clienteId);
 
-        // Verificação dos resultados
-        verify(clienteRepository, times(1)).existsById(clienteId); // Verifica se o método "existsById" do repositório foi chamado uma vez com o ID de teste
-        verify(clienteRepository, times(1)).deleteById(clienteId); // Verifica se o método "deleteById" do repositório foi chamado uma vez com o ID de teste
+        verify(clienteRepository, times(1)).existsById(clienteId);
+        verify(clienteRepository, times(1)).deleteById(clienteId);
     }
 
     @Test
     public void testDeleteNonExistingCliente() {
-        // ID do cliente de teste
         Long clienteId = 1L;
-
-        // Configuração do comportamento do repositório mockado
         when(clienteRepository.existsById(clienteId)).thenReturn(false);
 
-        // Verificação se o serviço lança uma exceção ao tentar excluir um cliente que não existe
         assertThrows(IllegalArgumentException.class, () -> clienteService.delete(clienteId));
-        verify(clienteRepository, times(1)).existsById(clienteId); // Verifica se o método "existsById" do repositório foi chamado uma vez com o ID de teste
-        verify(clienteRepository, never()).deleteById(clienteId); // Verifica se o método "deleteById" do repositório nunca foi chamado com o ID de teste
+
+        verify(clienteRepository, times(1)).existsById(clienteId);
+        verify(clienteRepository, never()).deleteById(clienteId);
     }
 }
-
